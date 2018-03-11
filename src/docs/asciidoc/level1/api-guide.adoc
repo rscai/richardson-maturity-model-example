@@ -84,17 +84,17 @@ include::{snippets}/level1/post/create/http-response.adoc[]
 | content
 | String
 | N
-| content of post
+| content of comment
 
 | createdAt
 | Date
 | N
-| timestamp of created post
+| timestamp of created comment
 
-| postId
-| Long
+| post
+| Post
 | N
-| post's id
+| post
 |===
 
 [[resources-comment-create]]
