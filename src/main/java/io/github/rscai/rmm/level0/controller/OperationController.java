@@ -34,6 +34,7 @@ public class OperationController {
   public void doOperation(HttpServletRequest request, HttpServletResponse response) {
     try {
       final String payload = IOUtils.toString(request.getInputStream(), Charset.forName("UTF-8"));
+      response.addHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);
       for (final Handler handler : handlers) {
         if (handler.accept(payload)) {
           response.getWriter().print(handler.handle(payload));

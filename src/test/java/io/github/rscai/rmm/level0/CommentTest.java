@@ -2,16 +2,26 @@ package io.github.rscai.rmm.level0;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.jdbc.SqlGroup;
@@ -28,15 +38,22 @@ import org.springframework.web.context.WebApplicationContext;
 })
 public class CommentTest {
 
+  @Rule
+  public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
   @Autowired
   private WebApplicationContext context;
 
   private MockMvc mockMvc;
-  private String url = "/api/level0/operation";
+  private ObjectMapper objectMapper;
+  private final String url = "/api/level0/operation";
 
   @Before
-  public void setUp() throws Exception {
-    mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+  public void setUp() {
+    mockMvc = MockMvcBuilders.webAppContextSetup(context)
+        .apply(documentationConfiguration(this.restDocumentation).operationPreprocessors()
+            .withRequestDefaults(prettyPrint()).withResponseDefaults(
+                prettyPrint())).build();
+    objectMapper = new ObjectMapper();
   }
 
   @Test
@@ -49,6 +66,24 @@ public class CommentTest {
         .andExpect(jsonPath("$.parameters.postId", is(1)))
         .andExpect(jsonPath("$.parameters.id", notNullValue()))
         .andExpect(jsonPath("$.parameters.content", is("comment 1")))
-        .andExpect(jsonPath("$.parameters.createdAt", notNullValue()));
+        .andExpect(jsonPath("$.parameters.createdAt", notNullValue()))
+        .andDo(document("level0/comment-create", requestFields(
+            fieldWithPath("command").type(JsonFieldType.STRING)
+                .description("must be 'createComment'"),
+            fieldWithPath("parameters.content").type(JsonFieldType.STRING)
+                .description("content of new comment"),
+            fieldWithPath("parameters.postId").type(JsonFieldType.NUMBER).description("post's id")),
+            responseFields(
+                fieldWithPath("status").type(JsonFieldType.STRING).description("result status"),
+                fieldWithPath("message").type(JsonFieldType.STRING)
+                    .description("error message if failed"),
+                fieldWithPath("parameters.id").type(JsonFieldType.NUMBER)
+                    .description("Id of created comment"),
+                fieldWithPath("parameters.content").type(JsonFieldType.STRING)
+                    .description("content of created comment"),
+                fieldWithPath("parameters.createdAt").type("Date")
+                    .description("create timestamp of comment"),
+                fieldWithPath("parameters.postId").type(JsonFieldType.NUMBER)
+                    .description("post's id"))));
   }
 }
