@@ -67,7 +67,7 @@ public class CommentTest {
         .andExpect(jsonPath("$.parameters.id", notNullValue()))
         .andExpect(jsonPath("$.parameters.content", is("comment 1")))
         .andExpect(jsonPath("$.parameters.createdAt", notNullValue()))
-        .andDo(document("level0/comment-create", requestFields(
+        .andDo(document("level0/create-comment", requestFields(
             fieldWithPath("command").type(JsonFieldType.STRING)
                 .description("must be 'createComment'"),
             fieldWithPath("parameters.content").type(JsonFieldType.STRING)

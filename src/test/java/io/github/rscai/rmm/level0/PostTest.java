@@ -67,7 +67,7 @@ public class PostTest {
         .andExpect(jsonPath("$.parameters.id", notNullValue()))
         .andExpect(jsonPath("$.parameters.content", is("Test post 123")))
         .andExpect(jsonPath("$.parameters.createdAt", notNullValue()))
-        .andDo(document("level0/post-create", requestFields(
+        .andDo(document("level0/create-post", requestFields(
             fieldWithPath("command").type(JsonFieldType.STRING).description("must be 'createPost'"),
             fieldWithPath("parameters.content").type(JsonFieldType.STRING)
                 .description("content of new post")), responseFields(

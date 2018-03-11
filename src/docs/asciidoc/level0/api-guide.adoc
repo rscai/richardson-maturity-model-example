@@ -12,54 +12,6 @@ Ray Cai;
 [[overview]]
 = Overview
 
-[[overview-http-verbs]]
-== HTTP verbs
-
-RESTful notes tries to adhere as closely as possible to standard HTTP and REST conventions in its
-use of HTTP verbs.
-
-|===
-| Verb | Usage
-
-| `GET`
-| Used to retrieve a resource
-
-| `POST`
-| Used to create a new resource
-
-| `PATCH`
-| Used to update an existing resource, including partial updates
-
-| `DELETE`
-| Used to delete an existing resource
-|===
-
-[[overview-http-status-codes]]
-== HTTP status codes
-
-RESTful notes tries to adhere as closely as possible to standard HTTP and REST conventions in its
-use of HTTP status codes.
-
-|===
-| Status code | Usage
-
-| `200 OK`
-| The request completed successfully
-
-| `201 Created`
-| A new resource has been created successfully. The resource's URI is available from the response's
-`Location` header
-
-| `204 No Content`
-| An update to an existing resource has been applied successfully
-
-| `400 Bad Request`
-| The request was malformed. The response body will include an error providing further information
-
-| `404 Not Found`
-| The requested resource did not exist
-|===
-
 [[overview-headers]]
 == Headers
 Every request should have the following header(s):
@@ -82,19 +34,19 @@ include::{snippets}/level0/headers-example/response-headers.adoc[]
 
 Request Payload:
 
-include::{snippets}/level0/post-create/request-fields.adoc[]
+include::{snippets}/level0/create-post/request-fields.adoc[]
 
 Response Payload:
 
-include::{snippets}/level0/post-create/response-fields.adoc[]
+include::{snippets}/level0/create-post/response-fields.adoc[]
 
 Example Request:
 
-include::{snippets}/level0/post-create/http-request.adoc[]
+include::{snippets}/level0/create-post/http-request.adoc[]
 
 Example Response:
 
-include::{snippets}/level0/post-create/http-response.adoc[]
+include::{snippets}/level0/create-post/http-response.adoc[]
 
 [[operations-comment-create]]
 === Create Comment
@@ -103,19 +55,19 @@ Request Payload:
 
 Request Payload:
 
-include::{snippets}/level0/comment-create/request-fields.adoc[]
+include::{snippets}/level0/create-comment/request-fields.adoc[]
 
 Response Payload:
 
-include::{snippets}/level0/comment-create/response-fields.adoc[]
+include::{snippets}/level0/create-comment/response-fields.adoc[]
 
 Example Request:
 
-include::{snippets}/level0/comment-create/http-request.adoc[]
+include::{snippets}/level0/create-comment/http-request.adoc[]
 
 Example Response:
 
-include::{snippets}/level0/comment-create/http-response.adoc[]
+include::{snippets}/level0/create-comment/http-response.adoc[]
 
 
 
