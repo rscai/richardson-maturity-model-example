@@ -3,35 +3,35 @@ sudo: false
 install: true
 addons:
   sonarcloud:
-    organization: $SONAR_CLOUD_ORGANIZATION
-    token: $SONAR_CLOUD_TOKEN
+    organization: "$SONAR_CLOUD_ORGANIZATION"
+    token: "$SONAR_CLOUD_TOKEN"
 jdk:
-  - oraclejdk8
+- oraclejdk8
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
-    
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
 jobs:
   include:
-    - stage: build
-      script: ./gradlew build check
-    - stage: analysis
-      script: ./gradlew sonarqube
-    - stage: deployment
-      deploy:
-        provider: heroku
-        api_key: $HEROKU_DEPLOY_KEY
-        skip_cleanup: true
-        on: 
-          branch: master
-        app:
-          master: rest-example-rscai
+  - stage: build
+    script: "./gradlew build check"
+  - stage: analysis
+    script: "./gradlew sonarqube"
+  - stage: deployment
+    script: "./gradlew help"
+    deploy:
+      provider: heroku
+      api_key: "$HEROKU_DEPLOY_KEY"
+      skip_cleanup: true
+      on:
+        branch: master
+      app:
+        master: rest-example-rscai
 stages:
-  - build
-  - analysis
-  - deployment
+- build
+- analysis
+- deployment
+
