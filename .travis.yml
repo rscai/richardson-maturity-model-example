@@ -17,12 +17,13 @@ cache:
 jobs:
   include:
   - stage: build
-    script: "./gradlew build check"
+    script: 
+      - ./gradlew build check
   - stage: analysis
     script: "./gradlew sonarqube"
   - stage: deployment
     script: 
-      - ./gradlew build -x test
+      - ./gradlew build
       - heroku plugins:install heroku-cli-deploy
       - heroku deploy:jar build/libs/richardson-maturity-model-example-0.0.1-SNAPSHOT.jar  --app rest-example-rscai
 stages:
