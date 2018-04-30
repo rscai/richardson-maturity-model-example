@@ -14,16 +14,16 @@ cache:
   directories:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
+  - "build/"
 jobs:
   include:
   - stage: build
     script: 
-      - ./gradlew build check
+      - ./gradlew clean build check
   - stage: analysis
     script: "./gradlew sonarqube"
   - stage: deployment
     script: 
-      - ./gradlew build
       - heroku plugins:install heroku-cli-deploy
       - heroku deploy:jar build/libs/richardson-maturity-model-example-0.0.1-SNAPSHOT.jar  --app rest-example-rscai
 stages:
