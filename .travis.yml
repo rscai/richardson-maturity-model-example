@@ -3,36 +3,29 @@ sudo: false
 install: true
 addons:
   sonarcloud:
-    organization: $SONAR_CLOUD_ORGANIZATION
-    token: $SONAR_CLOUD_TOKEN
+    organization: "$SONAR_CLOUD_ORGANIZATION"
+    token: "$SONAR_CLOUD_TOKEN"
 jdk:
-  - oraclejdk8
+- oraclejdk8
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
-    
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
 jobs:
   include:
-    - stage: build
-      script: ./gradlew build check
-    - stage: analysis
-      script: ./gradlew sonarqube
-    - stage: deployment
-      script: skip
-      deploy:
-        provider: heroku
-        api_key: $HEROKU_DEPLOY_KEY
-        skip_cleanup: true
-        on: 
-          branch: master
-        app:
-          master: rest-example-rscai
+  - stage: build
+    script: "./gradlew build check"
+  - stage: analysis
+    script: "./gradlew sonarqube"
+  - stage: deployment
+    script: heroku deploy:jar build/libs/richardson-maturity-model-example-0.0.1-SNAPSHOT.jar  --app rest-example-rscai
 stages:
-  - build
-  - analysis
-  - deployment
+- build
+- analysis
+- deployment
+env:
+  global:
+    secure: oVjiCqvhrVD5BTJ25Xi5pCwjP1pRh/oBwfvB4HFFUq7xSwnfmnGPZy7N/lolf5NfJv9ozSOaC5tmQKNMvkuowFWIZ+/pmfqjh4ZQO5Gwb2rCRFrHhC/n8xLKpc9f3ZJQgTbplTSCVjR3+jWtgqZUviBnHiECCKEuyAdTnsI7nKobzt2OFdAImKA7XkeeUFo0saxwxe4kwKU9NBPoA4zDXbR59giV+w2HHeAQPO0+JdnIDKxSxzpBhm8+41eLWxmATMSU1ToOWIk36ckkHwpSB6dFHmsjKWIftIlJuJYRJx+R1pPttleZ3REfcxtlVUGi1FDuSQNp+8RypgEU+2/49f31IVo7BEHY1QZkxGz8i3EvrxHVw19k5zX7Ajs/Yihe2Zu5HAuBMHF/8HYyafEnAlgjTv/OCdPJ3mQAKYrDlZKU3oVpz4+MlencQugstWUAPHELV5O6oi3ZG9h8F9TMwmn/mvMsiLAyszODCFEUc3CuckuEAk6lk7gEGL58ELQaucHImLvw5V4WUgjP+fwtzgFAqVJekiz7IuxJShDHIvmdHig+xmGi3m7fNeZ15pz5ZrWkX1JS47Rpxc3ypWAtrKyTFqroYLnUOr10XDsN1uY69AGR803B/nAITB1NNhazpuqoTXltn2WHJWt6GHQ2KjfJUydyeRdtpciwPh0CeHo=
