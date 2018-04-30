@@ -34,7 +34,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
     "spring.datasource.url=jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"})
-public class PostTest {
+public class PostControllerTest {
 
   @Rule
   public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();

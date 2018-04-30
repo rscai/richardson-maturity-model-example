@@ -16,7 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.rscai.rmm.level1.controller.RequestWrapper;
-import io.github.rscai.rmm.model.Comment;
 import io.github.rscai.rmm.model.Post;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,12 +24,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
-import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -38,20 +36,19 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
     "spring.datasource.url=jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"})
-@SqlGroup({
-    @Sql(scripts = "/io/github/rscai/rmm/level1/CommentTest.before.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-})
-public class CommentTest {
+public class PostControllerTest {
 
   @Rule
   public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
   @Autowired
+  private JdbcTemplate jdbcTemplate;
+  @Autowired
   private WebApplicationContext context;
 
   private MockMvc mockMvc;
   private ObjectMapper objectMapper;
-  private String url = "/api/level1/comment";
+  private String url = "/api/level1/post";
 
   @Before
   public void setUp() {
@@ -63,37 +60,34 @@ public class CommentTest {
     objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    JdbcTestUtils.deleteFromTables(jdbcTemplate, "COMMENT", "POST");
   }
 
   @Test
   public void testCreatePost() throws Exception {
 
     final Post post = new Post();
-    post.setId(1L);
-
-    final Comment comment = new Comment();
-    comment.setContent("Test Comment 123");
-    comment.setPost(post);
-    final RequestWrapper<Comment> requestWrapper = new RequestWrapper<>();
+    post.setContent("Test Post 123");
+    final RequestWrapper<Post> requestWrapper = new RequestWrapper<>();
     requestWrapper.setCommand("create");
-    requestWrapper.setData(comment);
+    requestWrapper.setData(post);
 
     mockMvc.perform(
         post(url).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(requestWrapper))).andExpect(status().isOk())
         .andExpect(jsonPath("$.status", is("SUCCESS")))
         .andExpect(jsonPath("$.data.id", notNullValue()))
-        .andExpect(jsonPath("$.data.content", is("Test Comment 123")))
+        .andExpect(jsonPath("$.data.content", is("Test Post 123")))
         .andExpect(jsonPath("$.data.createdAt", notNullValue()))
-        .andExpect(jsonPath("$.data.post.id", is(1)))
-        .andDo(document("level1/comment/create", requestFields(
-            fieldWithPath("command").type(JsonFieldType.STRING)
-                .description("must be 'createComment'"),
-            subsectionWithPath("data").type("Comment").description("comment")),
+        .andDo(document("level1/post/create", requestFields(
+            fieldWithPath("command").type(JsonFieldType.STRING).description("must be 'createPost'"),
+            subsectionWithPath("data").type("Post").description("post")),
             responseFields(
                 fieldWithPath("status").type(JsonFieldType.STRING).description("result status"),
                 fieldWithPath("message").type(JsonFieldType.STRING).optional()
                     .description("error message if failed"),
-                subsectionWithPath("data").type("Comment").description("comment"))));
+                subsectionWithPath("data").type("Post").description("post"))));
   }
+
 }
