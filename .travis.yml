@@ -21,7 +21,9 @@ jobs:
   - stage: analysis
     script: "./gradlew sonarqube"
   - stage: deployment
-    script: heroku deploy:jar build/libs/richardson-maturity-model-example-0.0.1-SNAPSHOT.jar  --app rest-example-rscai
+    script: 
+      - heroku plugins:install heroku-cli-deploy
+      - heroku deploy:jar build/libs/richardson-maturity-model-example-0.0.1-SNAPSHOT.jar  --app rest-example-rscai
 stages:
 - build
 - analysis
