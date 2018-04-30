@@ -1,0 +1,1 @@
+web: java $JAVA_OPTS -jar build/libs/richardson-maturity-model-example-0.0.1-SNAPSHOT.jar 
