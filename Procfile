@@ -1,1 +1,0 @@
-web: java -jar -Dserver.port=$PORT build/libs/richardson-maturity-model-example-0.0.1-SNAPSHOT.jar
