@@ -14,11 +14,7 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-deploy:
-  provider: heroku
-  api_key: $HEROKU_DEPLOY_KEY
-  app:
-    master: rest-example-rscai
+
     
 jobs:
   include:
@@ -26,6 +22,16 @@ jobs:
       script: ./gradlew build check
     - stage: analysis
       script: ./gradlew sonarqube
+    - stage: deployment
+      deploy:
+        provider: heroku
+        api_key: $HEROKU_DEPLOY_KEY
+        skip_cleanup: true
+        on: 
+          branch: master
+        app:
+          master: rest-example-rscai
 stages:
   - build
   - analysis
+  - deployment
